@@ -183,7 +183,7 @@ and [results/bugs.md](results/bugs.md). The dashboard's results view shows the s
 | target (edges) | Sleuth | no cmp | blind | libFuzzer | Sleuth ×8 | libFuzzer ×8 |
 |---|---|---|---|---|---|---|
 | png (364) | **234** | 117 | 122 | 112 | **236** | 113 |
-| xml (384) | 267 | 266 | 263 | 264 | 267 | 265 |
+| xml (391) | 273 | 272 | 269 | 270 | 273 | 271 |
 | der (91) | 83 | 83 | 83 | 75 | 83 | 77 |
 | json (296) | 251 | 251 | 250 | 246 | 251 | 250 |
 | vm (65) | 61 | 62 | 61 | 62 | 62 | 62 |
@@ -259,6 +259,9 @@ faulty `memcmp` reads out of bounds for any longer closing tag. It was corrected
 (`targets/xml/xml.cpp`), and the crash inputs were attributed again with the corrected build.
 The *detected* column for bug 8 is therefore right. The *triggered* times for bug 8 come from
 logs written with the narrow canary, which is why some are later than the detection times.
+Later, bug 7 was also changed: a plain field is now written first, so that libstdc++ builds
+catch its overflow too. Neither change alters what the code does on valid input. The XML
+coverage was re-measured by replaying the saved inputs through the final build (391 edges).
 
 ### Speed
 
@@ -310,7 +313,7 @@ Sleuth's unique crash signatures per run, against the bugs they belong to (from 
 
 ### Limits
 
-- The targets are small (65–384 edges) and the bugs are planted by the same author who wrote the
+- The targets are small (65–391 edges) and the bugs are planted by the same author who wrote the
   fuzzer, so the bugs suit its strengths more than real ones would. PNG shows a real mechanism
   (checksum repair). The tie on the other targets mostly shows that their bugs are shallow.
 - The runs last 15 minutes, with 3 repetitions. No significance tests are claimed. Where the
