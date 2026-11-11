@@ -1,0 +1,2 @@
+<?xml version="1.0"?>
+<root a="1" b="x&amp;y">text &lt;here&gt; &#65;&#x42;</root>

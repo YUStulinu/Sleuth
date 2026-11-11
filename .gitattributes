@@ -1,0 +1,8 @@
+* text=auto eol=lf
+*.png binary
+targets/*/seeds/* binary
+targets/*/pocs/* binary
+targets/*/dict text eol=lf
+results/*.json linguist-generated
+web/public/campaign.json linguist-generated
+web/package-lock.json linguist-generated

@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sleuth</title>
+  </head>
+  <body>
+    <header>
+      <h1>Sleuth</h1>
+      <span class="muted">coverage-guided fuzzer</span>
+      <nav>
+        <button data-view="live">Live</button>
+        <button data-view="results">Measured results</button>
+      </nav>
+      <span id="status" class="muted"></span>
+    </header>
+    <main>
+      <div id="live" hidden>
+        <div class="stats"></div>
+        <section class="panel"><h2>Coverage over time</h2><div id="live-cov"></div></section>
+        <section class="panel"><h2>Crashes (deduplicated across workers)</h2><div id="live-crashes" class="scroll"></div></section>
+      </div>
+      <div id="results" hidden></div>
+    </main>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

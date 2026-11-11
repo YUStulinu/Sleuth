@@ -1,0 +1,7 @@
+{
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/Scripts/python.exe",
+  "python.testing.pytestEnabled": true,
+  "python.testing.pytestArgs": ["tests"],
+  "rust-analyzer.linkedProjects": ["${workspaceFolder}/parallel/Cargo.toml"],
+  "files.exclude": { "build": true, "parallel/target": true, "web/node_modules": true, "results/raw": true }
+}

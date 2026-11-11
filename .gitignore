@@ -1,0 +1,10 @@
+build/
+parallel/target/
+results/raw/
+web/node_modules/
+web/dist/
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+results/*.log

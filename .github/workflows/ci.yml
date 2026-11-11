@@ -1,0 +1,69 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  fuzzer:
+    name: Controller, targets and end-to-end tests (Linux, clang)
+    runs-on: ubuntu-24.04
+    env:
+      CXX: clang++-18
+    steps:
+      - uses: actions/checkout@v4
+      - name: Toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang-18 libclang-rt-18-dev
+          clang++-18 --version
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Regenerate the seeds, proofs of concept and dictionaries (the tests then use these)
+        # Byte-for-byte equality is not expected: zlib builds differ in their output.
+        run: python targets/make_inputs.py
+      - name: Build (Sleuth and libFuzzer flavours of every target, controller, unit tests)
+        run: python build.py --tests
+      - name: Controller unit tests
+        run: build/test_fuzzer
+      - name: Parallel supervisor
+        run: cargo build --release --manifest-path parallel/Cargo.toml
+      - name: End-to-end tests (every planted bug, fuzzing, tmin, triage, parallel mode, analysis)
+        run: |
+          pip install -r requirements.txt
+          python -m pytest tests -q
+      - name: A short campaign and its analysis
+        run: |
+          python eval/campaign.py single --time 30 --reps 1 --jobs 4 --targets json vm --out ci-raw
+          python eval/analyze.py ci-raw --out ci-results --web ci-results/campaign.json
+          test -s ci-results/coverage.png
+
+  parallel:
+    name: Parallel supervisor (Rust)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+      - name: Tests
+        run: cargo test --release --manifest-path parallel/Cargo.toml
+      - name: Clippy
+        run: cargo clippy --release --manifest-path parallel/Cargo.toml -- -D warnings
+
+  web:
+    name: Dashboard (TypeScript)
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm ci
+      - run: npm test
+      - run: npm run build

@@ -1,0 +1,9 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    { "label": "build (targets, controller, tests)", "type": "shell", "command": "python build.py --tests", "group": "build", "problemMatcher": [] },
+    { "label": "unit tests (controller)", "type": "shell", "command": "${workspaceFolder}/build/test_fuzzer", "group": "test", "problemMatcher": [] },
+    { "label": "integration tests", "type": "shell", "command": "${workspaceFolder}/.venv/Scripts/python -m pytest tests -q", "group": "test", "problemMatcher": [] },
+    { "label": "parallel supervisor tests", "type": "shell", "command": "cargo test --release", "options": { "cwd": "${workspaceFolder}/parallel" }, "group": "test", "problemMatcher": [] }
+  ]
+}
