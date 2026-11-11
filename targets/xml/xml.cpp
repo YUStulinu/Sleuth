@@ -16,6 +16,8 @@
 namespace {
 
 struct Attr {
+    uint32_t name_hash;  // written first, by plain code: an overflow is caught by ASan even where
+                         // std::string's members live in an uninstrumented library (libstdc++)
     std::string name, value;
 };
 
@@ -181,6 +183,9 @@ struct Parser {
             if (!ok) break;
             // Bug 7: the attribute array has 16 slots and the count is not checked.
             SLEUTH_BUG(7, nattr >= 16);
+            uint32_t h = 2166136261u;
+            for (char ch : an) h = (h ^ (uint8_t)ch) * 16777619u;
+            attrs[nattr].name_hash = h;
             attrs[nattr].name = an;
             attrs[nattr].value = av;
             ++nattr;
